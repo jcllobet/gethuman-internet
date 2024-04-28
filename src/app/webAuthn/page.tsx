@@ -4,6 +4,7 @@ import { client, parsers } from "@passwordless-id/webauthn";
 import { AuthenticationParsed } from "@passwordless-id/webauthn/dist/esm/types";
 import styles from "./webAuthn.module.css";
 import "../globals.css";
+
 export const WebAuthPage: FC = () => {
   const [username, setUsername] = useState<string>(
     typeof window !== "undefined"
@@ -11,10 +12,15 @@ export const WebAuthPage: FC = () => {
       : ""
   );
 
-  const isClientAvailable = client.isAvailable();
+  const [isClientAvailable, setIsClientAvailable] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsClientAvailable(client.isAvailable());
+    }
+  }, []);
 
   // Registration
-
   const [isRegistered, setIsRegistered] = useState(false);
   const challenge =
     typeof window !== "undefined"
@@ -37,48 +43,45 @@ export const WebAuthPage: FC = () => {
   }, [checkIsRegistered, username]);
 
   const register = useCallback(async () => {
-    const res = await client.register(username, challenge, {
-      authenticatorType: "auto",
-      userVerification: "required",
-      timeout: 60000,
-      attestation: false,
-      debug: false,
-    });
-    const parsed = parsers.parseRegistration(res);
     if (typeof window !== "undefined") {
+      const res = await client.register(username, challenge, {
+        authenticatorType: "auto",
+        userVerification: "required",
+        timeout: 60000,
+        attestation: false,
+        debug: false,
+      });
+      const parsed = parsers.parseRegistration(res);
       window.localStorage.setItem("username", username);
       window.localStorage.setItem(
         "credential_" + username,
         parsed.credential.id
       );
       window.localStorage.setItem("challenge_" + username, challenge);
+      checkIsRegistered();
     }
-    checkIsRegistered();
   }, [challenge, checkIsRegistered, username]);
 
   // Login
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authenticationData, setAuthenticationData] =
     useState<AuthenticationParsed | null>(null);
 
   const login = useCallback(async () => {
-    const res = await client.authenticate(
-      [
-        typeof window !== "undefined"
-          ? window.localStorage.getItem("credential_" + username) || ""
-          : "",
-      ],
-      challenge,
-      {
-        authenticatorType: "auto",
-        userVerification: "required",
-        timeout: 60000,
-      }
-    );
-    const parsed = parsers.parseAuthentication(res);
-    setIsAuthenticated(true);
-    setAuthenticationData(parsed);
+    if (typeof window !== "undefined") {
+      const res = await client.authenticate(
+        [window.localStorage.getItem("credential_" + username) || ""],
+        challenge,
+        {
+          authenticatorType: "auto",
+          userVerification: "required",
+          timeout: 60000,
+        }
+      );
+      const parsed = parsers.parseAuthentication(res);
+      setIsAuthenticated(true);
+      setAuthenticationData(parsed);
+    }
   }, [challenge, username]);
 
   if (!isClientAvailable) {
