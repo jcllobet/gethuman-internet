@@ -2,7 +2,7 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import { client, parsers } from "@passwordless-id/webauthn";
 import { AuthenticationParsed } from "@passwordless-id/webauthn/dist/esm/types";
-import styles from "./webAuthn.module.css";
+import styles from "./webAuthn.css";
 import "../globals.css";
 
 export const WebAuthPage: FC = () => {
