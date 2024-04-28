@@ -2,8 +2,6 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import { client, parsers } from "@passwordless-id/webauthn";
 import { AuthenticationParsed } from "@passwordless-id/webauthn/dist/esm/types";
-import styles from "./webAuthn.css";
-import "../globals.css";
 
 export const WebAuthPage: FC = () => {
   const [username, setUsername] = useState<string>(
@@ -20,7 +18,6 @@ export const WebAuthPage: FC = () => {
     }
   }, []);
 
-  // Registration
   const [isRegistered, setIsRegistered] = useState(false);
   const challenge =
     typeof window !== "undefined"
@@ -62,7 +59,6 @@ export const WebAuthPage: FC = () => {
     }
   }, [challenge, checkIsRegistered, username]);
 
-  // Login
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authenticationData, setAuthenticationData] =
     useState<AuthenticationParsed | null>(null);
@@ -89,28 +85,32 @@ export const WebAuthPage: FC = () => {
   }
 
   return (
-    <div className={styles.form}>
-      <p className="row-between">
-        <b className={styles.text}>Status:</b>
+    <div className="flex flex-col items-center justify-center">
+      <p className="flex justify-between w-full">
+        <b className="p-2">Status:</b>
         {username.length > 1 ? (
-          <b className={styles.text}>You have an account already</b>
+          <b className="p-2">You have an account already</b>
         ) : (
-          <b className={styles.text}>You dont have account yet</b>
+          <b className="p-2">You dont have account yet</b>
         )}
       </p>
 
-      <p className="row-between">
-        <b className={styles.text}>Username:</b>{" "}
+      <p className="flex justify-between w-full">
+        <b className="p-2">Username:</b>
         <input
-          className={`${styles.input} `}
+          className="border border-gray-800 p-2 rounded-lg bg-transparent text-gray-800"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
       </p>
 
-      <p className="row">
+      <p className="flex w-full">
         <button
-          className={isRegistered ? styles.button2 : styles.button}
+          className={`px-4 py-2 border border-gray-800 rounded-lg ${
+            isRegistered
+              ? "bg-gray-800 text-white"
+              : "bg-transparent text-gray-800"
+          } hover:bg-gray-700 hover:text-white`}
           disabled={isRegistered || !!authenticationData}
           onClick={register}
         >
@@ -118,7 +118,7 @@ export const WebAuthPage: FC = () => {
         </button>
         <span style={{ width: 300 }}> </span>
         <button
-          className={styles.button}
+          className="px-4 py-2 border border-gray-800 rounded-lg bg-transparent text-gray-800 hover:bg-gray-700 hover:text-white"
           disabled={!isRegistered || !!authenticationData}
           onClick={login}
         >
@@ -128,10 +128,10 @@ export const WebAuthPage: FC = () => {
 
       {authenticationData && (
         <>
-          <p className="row-between">
-            <h3 className={styles.text}>Clear Data</h3>
+          <p className="flex justify-between w-full">
+            <h3 className="p-2">Clear Data</h3>
             <button
-              className={styles.button}
+              className="px-4 py-2 border border-gray-800 rounded-lg bg-transparent text-gray-800 hover:bg-gray-700 hover:text-white"
               onClick={() => {
                 setUsername("");
                 setAuthenticationData(null);
@@ -140,8 +140,8 @@ export const WebAuthPage: FC = () => {
               Clear
             </button>
           </p>
-          <h3 className={styles.text}>AuthenticationData</h3>
-          <pre className={styles.data}>
+          <h3 className="p-2">AuthenticationData</h3>
+          <pre className="border border-gray-800 p-4 bg-white text-gray-800 font-mono rounded-lg whitespace-pre-wrap overflow-auto w-4/5">
             <code aria-multiline={true}>
               {JSON.stringify(authenticationData, null, 2)}
             </code>
