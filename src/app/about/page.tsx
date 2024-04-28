@@ -22,23 +22,23 @@ const About = () => {
         message informs them that they have an account. Otherwise, they are
         prompted to enter a username to register.
         {"\n"} {"\n"}
-        The registration process begins when users click the "Register" button.
-        This triggers the register function, which communicates with the web
-        authentication client. The client generates a challenge and initiates
-        the registration process. Upon successful registration, the user's
-        credential ID is stored in the local storage, associating it with the
-        provided username.
+        The registration process begins when users click the
+        &quot;Register&quot; button. This triggers the register function, which
+        communicates with the web authentication client. The client generates a
+        challenge and initiates the registration process. Upon successful
+        registration, the user&apos;s credential ID is stored in the local
+        storage, associating it with the provided username.
         {"\n"} {"\n"}
-        To log in, users enter their username and click the "Login" button. The
-        login function is called, initiating the authentication process. The web
-        authentication client verifies the user's identity using their stored
-        credential ID and the challenge generated during login. If
-        authentication succeeds, the user is considered authenticated, and the
-        authentication data is displayed on the page.
+        To log in, users enter their username and click the &quot;Login&quot;
+        button. The login function is called, initiating the authentication
+        process. The web authentication client verifies the user&apos;s identity
+        using their stored credential ID and the challenge generated during
+        login. If authentication succeeds, the user is considered authenticated,
+        and the authentication data is displayed on the page.
         {"\n"} {"\n"}
         If the web authentication client is not available, a message is
         displayed indicating that web authentication is not supported in the
-        user's browser.
+        user&apos;s browser.
         {"\n"} {"\n"}
         The WebAuthPage component provides a simple and secure way for users to
         register and authenticate using web authentication. It demonstrates the
