@@ -6,7 +6,9 @@ import styles from "./webAuthn.module.css";
 import "../globals.css";
 export const WebAuthPage: FC = () => {
   const [username, setUsername] = useState<string>(
-    window.localStorage.getItem("username") || ""
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("username") || ""
+      : ""
   );
 
   const isClientAvailable = client.isAvailable();
@@ -15,11 +17,17 @@ export const WebAuthPage: FC = () => {
 
   const [isRegistered, setIsRegistered] = useState(false);
   const challenge =
-    window.localStorage.getItem("challenge_" + username) ||
-    window.crypto.randomUUID();
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("challenge_" + username) ||
+        window.crypto.randomUUID()
+      : "";
 
   const checkIsRegistered = useCallback(async () => {
-    setIsRegistered(!!window.localStorage.getItem("credential_" + username));
+    setIsRegistered(
+      typeof window !== "undefined"
+        ? !!window.localStorage.getItem("credential_" + username)
+        : false
+    );
   }, [username]);
 
   useEffect(() => {
@@ -37,9 +45,14 @@ export const WebAuthPage: FC = () => {
       debug: false,
     });
     const parsed = parsers.parseRegistration(res);
-    window.localStorage.setItem("username", username);
-    window.localStorage.setItem("credential_" + username, parsed.credential.id);
-    window.localStorage.setItem("challenge_" + username, challenge);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("username", username);
+      window.localStorage.setItem(
+        "credential_" + username,
+        parsed.credential.id
+      );
+      window.localStorage.setItem("challenge_" + username, challenge);
+    }
     checkIsRegistered();
   }, [challenge, checkIsRegistered, username]);
 
@@ -51,7 +64,11 @@ export const WebAuthPage: FC = () => {
 
   const login = useCallback(async () => {
     const res = await client.authenticate(
-      [window.localStorage.getItem("credential_" + username) || ""],
+      [
+        typeof window !== "undefined"
+          ? window.localStorage.getItem("credential_" + username) || ""
+          : "",
+      ],
       challenge,
       {
         authenticatorType: "auto",
